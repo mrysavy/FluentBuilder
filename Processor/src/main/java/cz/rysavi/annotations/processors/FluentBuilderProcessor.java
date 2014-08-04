@@ -32,7 +32,7 @@ public class FluentBuilderProcessor extends AbstractProcessor {
 
                 PrintWriter writer = null;
                 try {
-                    FileObject sourceFile = processingEnv.getFiler().createSourceFile(classProcessor.getBuilderClassName());
+                    FileObject sourceFile = processingEnv.getFiler().createSourceFile(classProcessor.getBuilderClassPath());
                     writer = new PrintWriter(sourceFile.openWriter());
                     writer.print(compilationUnit.toString());
                 } catch (IOException e) {

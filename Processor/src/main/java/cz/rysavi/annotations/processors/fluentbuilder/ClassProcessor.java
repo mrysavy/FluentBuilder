@@ -27,18 +27,21 @@ public class ClassProcessor {
     private final String packageName;
     private final String className;
     private final String builderClassName;
+    private final String builderClassPath;
 
     public ClassProcessor(TypeElement classElement) {
         FluentBuilder classFluentBuilder = classElement.getAnnotation(FluentBuilder.class);
         String packageName = ((PackageElement) classElement.getEnclosingElement()).getQualifiedName().toString();
         String className = classElement.getSimpleName().toString();
         String builderClassName = className + classFluentBuilder.builderSuffix();
+        String builderClassPath = classElement.getQualifiedName().toString() + classFluentBuilder.builderSuffix();
 
         this.classElement = classElement;
         this.classFluentBuilder = classFluentBuilder;
         this.packageName = packageName;
         this.className = className;
         this.builderClassName = builderClassName;
+        this.builderClassPath = builderClassPath;
     }
 
     public TypeElement getClassElement() {
@@ -59,6 +62,10 @@ public class ClassProcessor {
 
     public String getBuilderClassName() {
         return builderClassName;
+    }
+
+    public String getBuilderClassPath() {
+        return builderClassPath;
     }
 
     public boolean isEnabled() {

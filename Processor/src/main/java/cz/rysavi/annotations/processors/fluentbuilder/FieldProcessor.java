@@ -13,6 +13,7 @@ import japa.parser.ast.stmt.ReturnStmt;
 
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.PrimitiveType;
+import javax.lang.model.type.TypeKind;
 import java.util.List;
 import java.util.Set;
 
@@ -67,7 +68,7 @@ public class FieldProcessor {
     }
 
     private void processImports(Set<ImportDeclaration> importDeclarations) {
-        if (!(fieldElement.asType() instanceof PrimitiveType) && !fieldType.startsWith("java.lang.")) {
+        if (fieldElement.asType().getKind() == TypeKind.DECLARED && !fieldType.startsWith("java.lang.")) {
             ImportDeclaration importDeclaration = new ImportDeclaration(ASTHelper.createNameExpr(fieldType), false, false);
             importDeclarations.add(importDeclaration);
         }

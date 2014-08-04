@@ -125,7 +125,7 @@ public class ClassProcessor {
 
         ASTHelper.addStmt(buildMethodBlock,
                 new AssignExpr(
-                        new VariableDeclarationExpr(new ClassOrInterfaceType(className), Arrays.asList(new VariableDeclarator(new VariableDeclaratorId("result")))),
+                        new VariableDeclarationExpr(new ClassOrInterfaceType(className), Arrays.asList(new VariableDeclarator(new VariableDeclaratorId(BUILD_METHOD_RESULT_VARIABLE)))),
                         new ObjectCreationExpr(null, new ClassOrInterfaceType(className), new ArrayList<Expression>(0)),
                         AssignExpr.Operator.assign)
         );
@@ -135,7 +135,13 @@ public class ClassProcessor {
         }
 
         ASTHelper.addStmt(buildMethodBlock,
-                new ReturnStmt(new NameExpr("result"))
+                new ReturnStmt(new NameExpr(BUILD_METHOD_RESULT_VARIABLE))
         );
     }
+
+    static Expression createBuildMethodBodyExpression(String fieldName, String setterName) {
+        return new MethodCallExpr(new NameExpr(BUILD_METHOD_RESULT_VARIABLE), setterName, Arrays.asList((Expression) new FieldAccessExpr(new ThisExpr(), fieldName)));
+    }
+
+    private static final String BUILD_METHOD_RESULT_VARIABLE = "result";
 }

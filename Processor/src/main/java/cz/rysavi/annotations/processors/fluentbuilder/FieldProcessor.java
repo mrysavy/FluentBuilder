@@ -13,14 +13,12 @@ import japa.parser.ast.stmt.ReturnStmt;
 
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.PrimitiveType;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-// TODO dodelat kombinace (se jmeny fieldu - budou provolavat odpovidajici withXXX)
 // TODO dodelat pouziti specifickeho konstruktoru
 // TODO dodelat unit testy (namockovat writer a prohnat AST parserem a zkontrolovat)
-// TODO dodelat klonovani builderu, klonovani puvodniho objektu, sestaveni builderu z puvodniho objektu
+// TODO dodelat klonovani builderu, klonovani puvodniho objektu, sestaveni builderu z puvodniho objektu - konstruktory
 // TODO prenest komentare fieldu z orig tridy do builderu
 public class FieldProcessor {
     private final VariableElement fieldElement;
@@ -101,7 +99,7 @@ public class FieldProcessor {
 
     private void processBuildMethodBody(List<Expression> buildMethodBodyExpressions) {
         buildMethodBodyExpressions.add(
-                new MethodCallExpr(new NameExpr("result"), constructSetterName(), Arrays.asList((Expression) new FieldAccessExpr(new ThisExpr(), fieldName)))
+                ClassProcessor.createBuildMethodBodyExpression(fieldName, constructSetterName())
         );
     }
 

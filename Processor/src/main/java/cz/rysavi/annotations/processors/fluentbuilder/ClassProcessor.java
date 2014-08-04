@@ -14,6 +14,7 @@ import japa.parser.ast.stmt.ReturnStmt;
 import japa.parser.ast.type.ClassOrInterfaceType;
 
 import javax.annotation.Generated;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import java.util.*;
@@ -29,7 +30,7 @@ public class ClassProcessor {
 
     public ClassProcessor(TypeElement classElement) {
         FluentBuilder classFluentBuilder = classElement.getAnnotation(FluentBuilder.class);
-        String packageName = classElement.getEnclosingElement().getSimpleName().toString();
+        String packageName = ((PackageElement) classElement.getEnclosingElement()).getQualifiedName().toString();
         String className = classElement.getSimpleName().toString();
         String builderClassName = className + classFluentBuilder.builderSuffix();
 

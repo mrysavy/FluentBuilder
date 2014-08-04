@@ -1,40 +1,70 @@
 package cz.rysavi.annotations;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Inherited
-@Documented
-@Target({
-        ElementType.TYPE,
-        ElementType.FIELD
-})
-@Retention(RetentionPolicy.SOURCE)
-public @interface FluentBuilder {
-    public boolean exclude() default false; // TYPE | FIELD
+public interface FluentBuilder {
+	@Target(ElementType.TYPE)
+	@Retention(RetentionPolicy.SOURCE)
+	public static @interface Configuration {
+		public boolean enabled() default true;
 
-    public boolean includeForce() default false; // FIELD
+		public String builderSuffix() default "Builder";
 
-    public String setterName() default ""; // FIELD
+		public String buildMethod() default "build";
 
-    public String withMethodName() default ""; // FIELD
+		public String copyMethod() default "copy";
 
-    public String builderSuffix() default "Builder"; // TYPE
+		public String getterPrefix() default "get";
 
-    public String buildMethod() default "build"; // TYPE
+		public String setterPrefix() default "set";
 
-    public String setterPrefix() default "set"; // TYPE
+		public String withPrefix() default "with";
 
-    public String withPrefix() default "with"; // TYPE
+		public Combination[] combinations() default {};
 
-    public FBCombination[] combinations() default {};
+		public Addition[] additions() default {};
+	}
 
-    @Inherited
-    @Documented
-    @Target(ElementType.ANNOTATION_TYPE)
-    @Retention(RetentionPolicy.SOURCE)
-    public static @interface FBCombination {
-        public String name();
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.SOURCE)
+	public static @interface Definition {
+		public boolean excluded() default false;
 
-        public String[] fields();
-    }
+		public String getterName() default "";
+
+		public String setterName() default "";
+
+		public String withMethodName() default "";
+	}
+
+	@Target(ElementType.ANNOTATION_TYPE)
+	@Retention(RetentionPolicy.SOURCE)
+	public static @interface Combination {
+		public String name();
+
+		public String[] fields();
+	}
+
+	@Target(ElementType.ANNOTATION_TYPE)
+	@Retention(RetentionPolicy.SOURCE)
+	public static @interface Addition {
+		public String name();
+
+		public String withMethodName() default "";
+
+		public String method();
+
+		public Parameter[] parameters() default {};
+
+		@Target(ElementType.ANNOTATION_TYPE)
+		@Retention(RetentionPolicy.SOURCE)
+		public static @interface Parameter {
+			public String name();
+
+			public String type();
+		}
+	}
 }

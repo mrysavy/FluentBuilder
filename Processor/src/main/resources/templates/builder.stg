@@ -1,0 +1,159 @@
+builderClass(data) ::= <<
+<if(data.packageName)>package <data.packageName>;
+<endif>
+
+import javax.annotation.Generated;
+import java.util.*;
+
+@Generated("cz.rysavi.annotations.processors.FluentBuilderProcessor")
+public class <data.builderClassName> {
+
+	<! executions list definition !>
+	private final List\<Execution> executions = new ArrayList\<Execution>();
+
+	<! builder fields definition !>
+	<data.fields:builderField()>
+	<! empty constructor !>
+	public <data.builderClassName>() {
+	}
+
+	<! builder constructor !>
+	public <data.builderClassName>(<data.builderClassName> builder) {
+		<data.fields:builderBuilderConstructorBody()>
+	}
+
+	<! instance constructor !>
+	public <data.builderClassName>(<data.instanceClassName> instance) {
+		<data.fields:builderInstanceConstructorBody()>
+	}
+	<! base with methods !>
+    <data.fields:builderWithMethod()>
+	<! combinations with methods !>
+    <data.combinations:builderCombinationWithMethod()>
+	<! additions with methods !>
+    <data.additions:builderAdditionWithMethod()>
+
+	<! build method !>
+	public <data.instanceClassName> build() {
+		<data.instanceClassName> result = new <data.instanceClassName>();
+
+		<data.fields:builderBuildMethodBody()>
+		for (Execution execution: executions) {
+			execution.execute(result);
+		}
+
+		return result;
+	}
+
+	<! copy method !>
+	public static <data.instanceClassName> copy(<data.instanceClassName> instance) {
+		<data.instanceClassName> result = new <data.instanceClassName>();
+
+		<data.fields:builderCopyMethodBody()>
+		return result;
+	}
+
+	<! Execution interface definition !>
+    private static interface Execution {
+        public void execute(<data.instanceClassName> instance);
+    }
+}
+>>
+
+builderField(field) ::= <<
+private <field.type> <field.name>;
+
+>>
+
+builderBuilderConstructorBody(field) ::= <<
+
+this.<field.name> = builder.<field.name>;
+>>
+
+builderInstanceConstructorBody(field) ::= <<
+
+this.<field.name> = instance.<field.getterMethodName>();
+>>
+
+builderWithMethod(field) ::= <<
+
+
+public <data.builderClassName> <field.withMethodName>(<field.type> <field.name>) {
+    this.<field.name> = <field.name>;
+    return this;
+}
+>>
+
+builderCombinationWithMethod(combination) ::= <<
+
+
+public <data.builderClassName> <combination.withMethodName>(<builderCombinationWithMethodParameter(combination.fields)>) {
+    return this
+<combination.fields:builderCombinationWithMethodBody()>;
+}
+>>
+
+builderCombinationWithMethodParameter(fields) ::= <<
+<first(fields):builderCombinationWithMethodParameterFirst()><rest(fields):builderCombinationWithMethodParameterRest()>
+>>
+
+builderCombinationWithMethodParameterFirst(field) ::= <<
+<field.type> <field.name>
+>>
+
+builderCombinationWithMethodParameterRest(field) ::= <<
+, <builderCombinationWithMethodParameterFirst(field)>
+>>
+
+builderCombinationWithMethodBody(field) ::= <<
+
+        .<field.withMethodName>(<field.name>)
+>>
+
+builderAdditionWithMethod(addition) ::= <<
+
+
+public <data.builderClassName> <addition.withMethodName>(<builderAdditionWithMethodParameter(addition.parameters)>) {
+    executions.add(new Execution() {
+        @Override
+        public void execute(<data.instanceClassName> instance) {
+            instance.<addition.methodName>(<builderAdditionWithMethodCallParameter(addition.parameters)>);
+        }
+    });
+    return this;
+}
+>>
+
+builderAdditionWithMethodParameter(parameters) ::= <<
+<first(parameters):builderAdditionWithMethodParameterFirst()><rest(parameters):builderAdditionWithMethodParameterRest()>
+>>
+
+builderAdditionWithMethodParameterFirst(parameter) ::= <<
+final <parameter.type> <parameter.name>
+>>
+
+builderAdditionWithMethodParameterRest(parameter) ::= <<
+, <builderAdditionWithMethodParameterFirst(parameter)>
+>>
+
+builderAdditionWithMethodCallParameter(parameters) ::= <<
+<first(parameters):builderAdditionWithMethodCallParameterFirst()><rest(parameters):builderAdditionWithMethodCallParameterRest()>
+>>
+
+builderAdditionWithMethodCallParameterFirst(parameter) ::= <<
+<parameter.name>
+>>
+
+builderAdditionWithMethodCallParameterRest(parameter) ::= <<
+, <builderAdditionWithMethodCallParameterFirst(parameter)>
+>>
+
+builderBuildMethodBody(field) ::= <<
+result.<field.setterMethodName>(this.<field.name>);
+
+>>
+
+builderCopyMethodBody(field) ::= <<
+result.<field.setterMethodName>(instance.<field.getterMethodName>());
+
+>>

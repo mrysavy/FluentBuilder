@@ -1,8 +1,8 @@
 package cz.rysavi.annotations.processors;
 
-import cz.rysavi.annotations.FluentBuilder;
-import cz.rysavi.annotations.processors.fluentbuilder.ClassProcessor;
-import japa.parser.ast.CompilationUnit;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
@@ -13,41 +13,52 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic;
 import javax.tools.FileObject;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Set;
 
-@SupportedAnnotationTypes("cz.rysavi.annotations.FluentBuilder")
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
+
+import cz.rysavi.annotations.FluentBuilder;
+import cz.rysavi.annotations.processors.fluentbuilder.Data;
+import cz.rysavi.annotations.processors.fluentbuilder.Processor;
+
+@SupportedAnnotationTypes("cz.rysavi.annotations.FluentBuilder.Configuration")
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class FluentBuilderProcessor extends AbstractProcessor {
-    @Override
-    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        for (TypeElement element : ElementFilter.typesIn(roundEnv.getElementsAnnotatedWith(FluentBuilder.class))) {
-            ClassProcessor classProcessor = new ClassProcessor(element);
+	private static final STGroup builderClassTemplateGroup = new STGroupFile("templates/builder.stg");
 
-            if (classProcessor.isEnabled()) {
-                processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, String.format("Processing class %s.", classProcessor.getClassName()));
-                CompilationUnit compilationUnit = new CompilationUnit();
-                classProcessor.process(compilationUnit);
+	@Override
+	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+		for (TypeElement element : ElementFilter.typesIn(roundEnv.getElementsAnnotatedWith(FluentBuilder.Configuration.class))) {
+			Processor processor = new Processor(element);
 
-                PrintWriter writer = null;
-                try {
-                    FileObject sourceFile = processingEnv.getFiler().createSourceFile(classProcessor.getBuilderClassPath());
-                    writer = new PrintWriter(sourceFile.openWriter());
-                    writer.print(compilationUnit.toString());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } finally {
-                    if (writer != null) {
-                        writer.close();
-                    }
-                }
-//                System.out.println(compilationUnit.toString());
-            } else {
-                processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, String.format("Ignoring class %s (exclude() == true).", classProcessor.getClassName()));
-            }
-        }
+			if (processor.isEnabled()) {
+				Data data = new Data();
 
-        return true;
-    }
+				processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, String.format("Processing class %s.", processor.getFullClassName()));
+				processor.process(data);
+
+				ST builderClassTemplate = builderClassTemplateGroup.getInstanceOf("builderClass");
+				builderClassTemplate.add("data", data);
+
+				PrintWriter writer = null;
+				try {
+					FileObject sourceFile = processingEnv.getFiler().createSourceFile(processor.getBuilderFullClassName());
+					writer = new PrintWriter(sourceFile.openWriter());
+					writer.print(builderClassTemplate.render());
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				} finally {
+					if (writer != null) {
+						writer.close();
+					}
+				}
+				// System.out.println(builderClassTemplate.render());
+			} else {
+				processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, String.format("Ignoring class %s (exclude() == true).", processor.getFullClassName()));
+			}
+		}
+
+		return false;
+	}
 }

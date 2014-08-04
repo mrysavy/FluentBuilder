@@ -78,8 +78,7 @@ public class ClassProcessor {
         }
 
         compilationUnit.setImports(new ArrayList<ImportDeclaration>(Arrays.asList(
-                new ImportDeclaration(ASTHelper.createNameExpr(Generated.class.getName()), false, false),
-                new ImportDeclaration(ASTHelper.createNameExpr("java.lang"), false, true)
+                new ImportDeclaration(ASTHelper.createNameExpr(Generated.class.getName()), false, false)
         )));
 
         Set<ImportDeclaration> importDeclarations = new HashSet<ImportDeclaration>();

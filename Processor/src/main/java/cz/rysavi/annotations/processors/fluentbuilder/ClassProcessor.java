@@ -81,7 +81,12 @@ public class ClassProcessor {
                 new ImportDeclaration(ASTHelper.createNameExpr(Generated.class.getName()), false, false)
         )));
 
-        Set<ImportDeclaration> importDeclarations = new HashSet<ImportDeclaration>();
+        Set<ImportDeclaration> importDeclarations = new TreeSet<ImportDeclaration>(new Comparator<ImportDeclaration>() {
+            @Override
+            public int compare(ImportDeclaration o1, ImportDeclaration o2) {
+                return o1.toString().compareTo(o2.toString());
+            }
+        });
         List<FieldDeclaration> fieldDeclarations = new ArrayList<FieldDeclaration>();
         List<MethodDeclaration> withMethodDeclarations = new ArrayList<MethodDeclaration>();
         List<Expression> buildMethodBodyExpressions = new ArrayList<Expression>();

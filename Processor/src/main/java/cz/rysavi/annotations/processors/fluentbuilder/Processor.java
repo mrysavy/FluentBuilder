@@ -92,9 +92,9 @@ public class Processor {
 		String fieldTypeSimple = FBHelper.simpleClassName(fieldType);
 		data.addField(
 			new Data.Field(fieldTypeSimple, fieldName)
-				.setWithMethodName(constructWithMethodName(definition, fieldName))
-				.setSetterMethodName(constructSetterName(definition, fieldName))
-				.setGetterMethodName(constructGetterName(definition, fieldName))
+				.setWithMethodName(constructWithMethodName(definition, fieldElement))
+				.setSetterMethodName(constructSetterName(definition, fieldElement))
+				.setGetterMethodName(constructGetterName(definition, fieldElement))
 			);
 	}
 
@@ -117,7 +117,7 @@ public class Processor {
 			String fieldTypeSimple = FBHelper.simpleClassName(fieldType);
 
 			FluentBuilder.Definition definition = fieldElement.getAnnotation(FluentBuilder.Definition.class);
-			String fieldWithMethodName = FBHelper.constructWithMethodName(configuration, definition, fieldName);
+			String fieldWithMethodName = FBHelper.constructWithMethodName(configuration, definition, fieldElement);
 
 			dataCombination.addField(
 				new Data.Field(fieldTypeSimple, fieldName)
@@ -144,15 +144,15 @@ public class Processor {
 		data.addAddition(dataAddition);
 	}
 
-	private String constructGetterName(FluentBuilder.Definition definition, String fieldName) {
-		return FBHelper.constructGetterName(configuration, definition, fieldName);
+	private String constructGetterName(FluentBuilder.Definition definition, VariableElement fieldElement) {
+		return FBHelper.constructGetterName(configuration, definition, fieldElement);
 	}
 
-	private String constructSetterName(FluentBuilder.Definition definition, String fieldName) {
-		return FBHelper.constructSetterName(configuration, definition, fieldName);
+	private String constructSetterName(FluentBuilder.Definition definition, VariableElement fieldElement) {
+		return FBHelper.constructSetterName(configuration, definition, fieldElement);
 	}
 
-	private String constructWithMethodName(FluentBuilder.Definition definition, String fieldName) {
-		return FBHelper.constructWithMethodName(configuration, definition, fieldName);
+	private String constructWithMethodName(FluentBuilder.Definition definition, VariableElement fieldElement) {
+		return FBHelper.constructWithMethodName(configuration, definition, fieldElement);
 	}
 }

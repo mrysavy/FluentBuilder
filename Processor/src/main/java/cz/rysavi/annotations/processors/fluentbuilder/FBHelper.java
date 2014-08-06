@@ -7,6 +7,7 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.ElementFilter;
 
 import cz.rysavi.annotations.FluentBuilder;
@@ -81,27 +82,28 @@ public class FBHelper {
 		return null;
 	}
 
-	public static String constructGetterName(FluentBuilder.Configuration configuration, FluentBuilder.Definition definition, String fieldName) {
+	public static String constructGetterName(FluentBuilder.Configuration configuration, FluentBuilder.Definition definition, VariableElement fieldElement) {
 		if (definition != null && definition.getterName().length() > 0) {
 			return definition.getterName();
 		} else {
-			return configuration.getterPrefix() + FBHelper.firstUpper(fieldName);
+			String prefix = fieldElement.asType().getKind() == TypeKind.BOOLEAN ? configuration.isPrefix() : configuration.getterPrefix();
+			return prefix + FBHelper.firstUpper(fieldElement.getSimpleName().toString());
 		}
 	}
 
-	public static String constructSetterName(FluentBuilder.Configuration configuration, FluentBuilder.Definition definition, String fieldName) {
+	public static String constructSetterName(FluentBuilder.Configuration configuration, FluentBuilder.Definition definition, VariableElement fieldElement) {
 		if (definition != null && definition.setterName().length() > 0) {
 			return definition.setterName();
 		} else {
-			return configuration.setterPrefix() + FBHelper.firstUpper(fieldName);
+			return configuration.setterPrefix() + FBHelper.firstUpper(fieldElement.getSimpleName().toString());
 		}
 	}
 
-	public static String constructWithMethodName(FluentBuilder.Configuration configuration, FluentBuilder.Definition definition, String fieldName) {
+	public static String constructWithMethodName(FluentBuilder.Configuration configuration, FluentBuilder.Definition definition, VariableElement fieldElement) {
 		if (definition != null && !definition.withMethodName().isEmpty()) {
 			return definition.withMethodName();
 		} else {
-			return configuration.withPrefix() + FBHelper.firstUpper(fieldName);
+			return configuration.withPrefix() + FBHelper.firstUpper(fieldElement.getSimpleName().toString());
 		}
 	}
 

@@ -19,6 +19,8 @@ public interface FluentBuilder {
 
 		public String getterPrefix() default "get";
 
+		public String isPrefix() default "is";
+
 		public String setterPrefix() default "set";
 
 		public String withPrefix() default "with";

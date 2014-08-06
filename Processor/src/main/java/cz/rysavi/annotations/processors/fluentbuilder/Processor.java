@@ -3,9 +3,14 @@ package cz.rysavi.annotations.processors.fluentbuilder;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 
 import cz.rysavi.annotations.FluentBuilder;
 
+// TODO special konstruktory builderu (s udanymi fieldy)
+// TODO volani special konstruktoru u instance (s udanymi fieldy)
 public class Processor {
 	private final TypeElement classElement;
 	private final FluentBuilder.Configuration configuration;
@@ -48,6 +53,10 @@ public class Processor {
 		processClass(data);
 	}
 
+	public void processFields(Data data) {
+		processClassFields(data);
+	}
+
 	private void processClass(Data data) {
 		if (!packageName.isEmpty()) {
 			data.setPackageName(packageName);
@@ -62,6 +71,13 @@ public class Processor {
 		// return o1.toString().compareTo(o2.toString());
 		// }
 		// });
+
+		processClassFields(data);
+	}
+
+	private void processClassFields(Data data) {
+		processSuperClassFields(data);
+
 		for (VariableElement field : FBHelper.getFields(classElement)) {
 			processField(field, data);
 		}
@@ -73,6 +89,21 @@ public class Processor {
 		for (FluentBuilder.Addition addition : configuration.additions()) {
 			processAddition(addition, data);
 		}
+	}
+
+	private void processSuperClassFields(Data data) {
+		TypeMirror superClass = classElement.getSuperclass();
+		if (superClass.getKind() == TypeKind.NONE) {
+			return;
+		}
+
+		TypeElement superClassElement = (TypeElement) ((DeclaredType) superClass).asElement();
+		if (superClassElement.getAnnotation(FluentBuilder.Configuration.class) == null) {
+			return;
+		}
+
+		Processor superClassProcessor = new Processor(superClassElement);
+		superClassProcessor.processFields(data);
 	}
 
 	private void processField(VariableElement fieldElement, Data data) {

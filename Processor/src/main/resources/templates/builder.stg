@@ -26,16 +26,18 @@ public class <data.builderClassName> {
 	public <data.builderClassName>(<data.instanceClassName> instance) {
 		<data.fields:builderInstanceConstructorBody()>
 	}
+	<! special constructors !>
+	<data.constructors:builderConstructor()>
 	<! base with methods !>
-    <data.fields:builderWithMethod()>
+	<data.fields:builderWithMethod()>
 	<! combinations with methods !>
-    <data.combinations:builderCombinationWithMethod()>
+	<data.combinations:builderCombinationWithMethod()>
 	<! additions with methods !>
-    <data.additions:builderAdditionWithMethod()>
+	<data.additions:builderAdditionWithMethod()>
 
 	<! build method !>
 	public <data.instanceClassName> build() {
-		<data.instanceClassName> result = new <data.instanceClassName>();
+		<data.instanceClassName> result = new <data.instanceClassName>(<builderMethodCallParametersThis(data.constructorFields)>);
 
 		<data.fields:builderBuildMethodBody()>
 		for (Execution execution: executions) {
@@ -47,7 +49,7 @@ public class <data.builderClassName> {
 
 	<! copy method !>
 	public static <data.instanceClassName> copy(<data.instanceClassName> instance) {
-		<data.instanceClassName> result = new <data.instanceClassName>();
+		<data.instanceClassName> result = new <data.instanceClassName>(<builderMethodCallParametersGetter(data.constructorFields, "instance")>);
 
 		<data.fields:builderCopyMethodBody()>
 		return result;
@@ -84,25 +86,26 @@ public <data.builderClassName> <field.withMethodName>(<field.type> <field.name>)
 }
 >>
 
-builderCombinationWithMethod(combination) ::= <<
+builderConstructor(constructor) ::= <<
 
 
-public <data.builderClassName> <combination.withMethodName>(<builderCombinationWithMethodParameter(combination.fields)>) {
-    return this
-<combination.fields:builderCombinationWithMethodBody()>;
+public <data.builderClassName>(<builderMethodParameters(constructor.parameters)>) {
+	<constructor.parameters:builderConstructorBody()>
 }
 >>
 
-builderCombinationWithMethodParameter(fields) ::= <<
-<first(fields):builderCombinationWithMethodParameterFirst()><rest(fields):builderCombinationWithMethodParameterRest()>
+builderConstructorBody(parameter) ::= <<
+
+this.<parameter.name> = <parameter.name>;
 >>
 
-builderCombinationWithMethodParameterFirst(field) ::= <<
-<field.type> <field.name>
->>
+builderCombinationWithMethod(combination) ::= <<
 
-builderCombinationWithMethodParameterRest(field) ::= <<
-, <builderCombinationWithMethodParameterFirst(field)>
+
+public <data.builderClassName> <combination.withMethodName>(<builderMethodParameters(combination.fields)>) {
+    return this
+<combination.fields:builderCombinationWithMethodBody()>;
+}
 >>
 
 builderCombinationWithMethodBody(field) ::= <<
@@ -113,47 +116,71 @@ builderCombinationWithMethodBody(field) ::= <<
 builderAdditionWithMethod(addition) ::= <<
 
 
-public <data.builderClassName> <addition.withMethodName>(<builderAdditionWithMethodParameter(addition.parameters)>) {
+public <data.builderClassName> <addition.withMethodName>(<builderMethodParameters(addition.parameters)>) {
     executions.add(new Execution() {
         @Override
         public void execute(<data.instanceClassName> instance) {
-            instance.<addition.methodName>(<builderAdditionWithMethodCallParameter(addition.parameters)>);
+            instance.<addition.methodName>(<builderMethodCallParameters(addition.parameters)>);
         }
     });
     return this;
 }
 >>
 
-builderAdditionWithMethodParameter(parameters) ::= <<
-<first(parameters):builderAdditionWithMethodParameterFirst()><rest(parameters):builderAdditionWithMethodParameterRest()>
->>
-
-builderAdditionWithMethodParameterFirst(parameter) ::= <<
-final <parameter.type> <parameter.name>
->>
-
-builderAdditionWithMethodParameterRest(parameter) ::= <<
-, <builderAdditionWithMethodParameterFirst(parameter)>
->>
-
-builderAdditionWithMethodCallParameter(parameters) ::= <<
-<first(parameters):builderAdditionWithMethodCallParameterFirst()><rest(parameters):builderAdditionWithMethodCallParameterRest()>
->>
-
-builderAdditionWithMethodCallParameterFirst(parameter) ::= <<
-<parameter.name>
->>
-
-builderAdditionWithMethodCallParameterRest(parameter) ::= <<
-, <builderAdditionWithMethodCallParameterFirst(parameter)>
->>
-
 builderBuildMethodBody(field) ::= <<
-result.<field.setterMethodName>(this.<field.name>);
-
+<if(!field.constructorField)>result.<field.setterMethodName>(this.<field.name>);
+<endif>
 >>
 
 builderCopyMethodBody(field) ::= <<
-result.<field.setterMethodName>(instance.<field.getterMethodName>());
+<if(!field.constructorField)>result.<field.setterMethodName>(instance.<field.getterMethodName>());
+<endif>
+>>
 
+builderMethodParameters(parameters) ::= <<
+<first(parameters):builderMethodParameterFirst()><rest(parameters):builderMethodParameterRest()>
+>>
+
+builderMethodParameterFirst(parameter) ::= <<
+final <parameter.type> <parameter.name>
+>>
+
+builderMethodParameterRest(parameter) ::= <<
+, <builderMethodParameterFirst(parameter)>
+>>
+
+builderMethodCallParameters(parameters) ::= <<
+<first(parameters):builderMethodCallParameterFirst()><rest(parameters):builderMethodCallParameterRest()>
+>>
+
+builderMethodCallParameterFirst(parameter) ::= <<
+<parameter.name>
+>>
+
+builderMethodCallParameterRest(parameter) ::= <<
+, <builderMethodCallParameterFirst(parameter)>
+>>
+
+builderMethodCallParametersThis(parameters) ::= <<
+<first(parameters):builderMethodCallParameterThisFirst()><rest(parameters):builderMethodCallParameterThisRest()>
+>>
+
+builderMethodCallParameterThisFirst(parameter) ::= <<
+this.<parameter.name>
+>>
+
+builderMethodCallParameterThisRest(parameter) ::= <<
+, <builderMethodCallParameterThisFirst(parameter)>
+>>
+
+builderMethodCallParametersGetter(parameters, instance) ::= <<
+<first(parameters):builderMethodCallParameterGetterFirst()><rest(parameters):builderMethodCallParameterGetterRest()>
+>>
+
+builderMethodCallParameterGetterFirst(parameter) ::= <<
+<instance>.<parameter.getterMethodName>()
+>>
+
+builderMethodCallParameterGetterRest(parameter) ::= <<
+, <builderMethodCallParameterGetterFirst(parameter)>
 >>

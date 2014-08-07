@@ -7,7 +7,9 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 
 import cz.rysavi.annotations.FluentBuilder;
@@ -33,6 +35,8 @@ public class FBHelper {
 //		return str.substring(index + 1);
 	}
 
+	// TODO vcetne superclasses
+	// TODO Configuration z superclasses k odpovidajicim fieldum
 	public static List<ExecutableElement> getMethods(TypeElement classElement) {
 		return ElementFilter.methodsIn(classElement.getEnclosedElements());
 	}
@@ -45,6 +49,11 @@ public class FBHelper {
 			if (item.getModifiers().contains(Modifier.STATIC)) {
 				iterator.remove();
 			}
+		}
+
+		TypeMirror superClass = classElement.getSuperclass();
+		if (superClass.getKind() != TypeKind.NONE) {
+			result.addAll(getFields((TypeElement) ((DeclaredType) superClass).asElement()));
 		}
 
 		return result;

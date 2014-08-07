@@ -1,16 +1,15 @@
 package cz.rysavi.annotations.processors.fluentbuilder;
 
+import java.util.Iterator;
+
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
 
 import cz.rysavi.annotations.FluentBuilder;
 
 // TODO special konstruktory builderu (s udanymi fieldy)
-// TODO volani special konstruktoru u instance (s udanymi fieldy)
+// TODO speciality ze superclasses
 public class Processor {
 	private final TypeElement classElement;
 	private final FluentBuilder.Configuration configuration;
@@ -53,10 +52,6 @@ public class Processor {
 		processClass(data);
 	}
 
-	public void processFields(Data data) {
-		processClassFields(data);
-	}
-
 	private void processClass(Data data) {
 		if (!packageName.isEmpty()) {
 			data.setPackageName(packageName);
@@ -72,16 +67,21 @@ public class Processor {
 		// }
 		// });
 
-		processClassFields(data);
-	}
-
-	private void processClassFields(Data data) {
-		processSuperClassFields(data);
-
 		for (VariableElement field : FBHelper.getFields(classElement)) {
 			processField(field, data);
 		}
 
+		for (String constructorField : configuration.constructorFields()) {
+			for (Iterator<Data.Field> iterator = data.getFields().iterator(); iterator.hasNext();) {
+				Data.Field field = iterator.next();
+				if (constructorField.equals(field.getName())) {
+					field.setConstructorField(true);
+					data.addConstructorField(field);
+					break;
+				}
+			}
+		}
+		
 		for (FluentBuilder.Combination combination : configuration.combinations()) {
 			processCombination(combination, data);
 		}
@@ -89,21 +89,10 @@ public class Processor {
 		for (FluentBuilder.Addition addition : configuration.additions()) {
 			processAddition(addition, data);
 		}
-	}
 
-	private void processSuperClassFields(Data data) {
-		TypeMirror superClass = classElement.getSuperclass();
-		if (superClass.getKind() == TypeKind.NONE) {
-			return;
+		for (FluentBuilder.Constructor constructor : configuration.constructors()) {
+			processConstructor(constructor, data);
 		}
-
-		TypeElement superClassElement = (TypeElement) ((DeclaredType) superClass).asElement();
-		if (superClassElement.getAnnotation(FluentBuilder.Configuration.class) == null) {
-			return;
-		}
-
-		Processor superClassProcessor = new Processor(superClassElement);
-		superClassProcessor.processFields(data);
 	}
 
 	private void processField(VariableElement fieldElement, Data data) {
@@ -173,6 +162,25 @@ public class Processor {
 		}
 
 		data.addAddition(dataAddition);
+	}
+
+	private void processConstructor(FluentBuilder.Constructor constructor, Data data) {
+		String[] constructorParameters = constructor.fields();
+
+		Data.Constructor dataConstructor = new Data.Constructor();
+
+		for (String constructorParameter : constructorParameters) {
+			VariableElement fieldElement = FBHelper.getField(classElement, constructorParameter);
+			if (fieldElement == null) {
+				// TODO
+				continue;
+			}
+			String parameterName = fieldElement.getSimpleName().toString();
+			String parameterType = fieldElement.asType().toString();
+			dataConstructor.addParameter(new Data.Parameter(parameterType, parameterName));
+		}
+
+		data.addConstructor(dataConstructor);
 	}
 
 	private String constructGetterName(FluentBuilder.Definition definition, VariableElement fieldElement) {

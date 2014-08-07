@@ -25,9 +25,13 @@ public interface FluentBuilder {
 
 		public String withPrefix() default "with";
 
+		public String[] constructorFields() default {};
+
 		public Combination[] combinations() default {};
 
 		public Addition[] additions() default {};
+
+		public Constructor[] constructors() default {};
 	}
 
 	@Target(ElementType.FIELD)
@@ -68,5 +72,11 @@ public interface FluentBuilder {
 
 			public String type();
 		}
+	}
+
+	@Target(ElementType.ANNOTATION_TYPE)
+	@Retention(RetentionPolicy.SOURCE)
+	public static @interface Constructor {
+		public String[] fields();
 	}
 }

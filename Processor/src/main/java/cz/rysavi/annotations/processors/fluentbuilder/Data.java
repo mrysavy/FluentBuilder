@@ -8,8 +8,10 @@ public class Data {
 	private String builderClassName;
 	private String instanceClassName;
 	private List<Field> fields = new ArrayList<Field>();
+	private List<Field> constructorFields = new ArrayList<Field>();
 	private List<Combination> combinations = new ArrayList<Combination>();
 	private List<Addition> additions = new ArrayList<Addition>();
+	private List<Constructor> constructors = new ArrayList<Constructor>();
 
 	public String getPackageName() {
 		return packageName;
@@ -52,6 +54,20 @@ public class Data {
 		return this;
 	}
 
+	public List<Field> getConstructorFields() {
+		return constructorFields;
+	}
+
+	public Data setConstructorFields(List<Field> setConstructorFields) {
+		this.constructorFields = setConstructorFields;
+		return this;
+	}
+
+	public Data addConstructorField(Field constructorField) {
+		this.constructorFields.add(constructorField);
+		return this;
+	}
+
 	public List<Combination> getCombinations() {
 		return combinations;
 	}
@@ -77,6 +93,20 @@ public class Data {
 
 	public Data addAddition(Addition addition) {
 		this.additions.add(addition);
+		return this;
+	}
+
+	public List<Constructor> getConstructors() {
+		return constructors;
+	}
+
+	public Data setConstructors(List<Constructor> setConstructors) {
+		this.constructors = setConstructors;
+		return this;
+	}
+
+	public Data addConstructor(Constructor constructor) {
+		this.constructors.add(constructor);
 		return this;
 	}
 
@@ -112,6 +142,7 @@ public class Data {
 		private String withMethodName;
 		private String setterMethodName;
 		private String getterMethodName;
+		private boolean constructorField;
 
 		public Field(String type, String name) {
 			super(type, name);
@@ -154,6 +185,14 @@ public class Data {
 		public Field setGetterMethodName(String setGetterMethodName) {
 			this.getterMethodName = setGetterMethodName;
 			return this;
+		}
+
+		public boolean isConstructorField() {
+			return constructorField;
+		}
+
+		public void setConstructorField(boolean constructorField) {
+			this.constructorField = constructorField;
 		}
 	}
 
@@ -247,6 +286,27 @@ public class Data {
 		}
 
 		public Addition addParameter(Parameter parameter) {
+			this.parameters.add(parameter);
+			return this;
+		}
+	}
+
+	public static class Constructor {
+		private List<Parameter> parameters = new ArrayList<Parameter>();
+
+		public Constructor() {
+		}
+
+		public List<Parameter> getParameters() {
+			return parameters;
+		}
+
+		public Constructor setParameters(List<Parameter> setParameters) {
+			this.parameters = setParameters;
+			return this;
+		}
+
+		public Constructor addParameter(Parameter parameter) {
 			this.parameters.add(parameter);
 			return this;
 		}

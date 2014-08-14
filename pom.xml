@@ -7,7 +7,7 @@
     <groupId>cz.rysavi</groupId>
     <artifactId>FluentBuilder</artifactId>
     <packaging>pom</packaging>
-    <version>0.2</version>
+    <version>0.3.SNAPSHOT</version>
 
     <modules>
         <module>Annotations</module>

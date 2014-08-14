@@ -20,20 +20,20 @@ public class Processor {
 	private final String builderSimpleClassName;
 
 	public Processor(TypeElement classElement) {
-		FluentBuilder.Configuration configuration = classElement.getAnnotation(FluentBuilder.Configuration.class);
-		String packageName = ((PackageElement) classElement.getEnclosingElement()).getQualifiedName().toString();
-		String fullClassName = classElement.getQualifiedName().toString();
-		String simpleClassName = classElement.getSimpleName().toString();
-		String builderFullClassPath = fullClassName + configuration.builderSuffix();
-		String builderSimpleClassName = simpleClassName + configuration.builderSuffix();
+		FluentBuilder.Configuration configurationFinal = classElement.getAnnotation(FluentBuilder.Configuration.class);
+		String packageNameFinal = ((PackageElement) classElement.getEnclosingElement()).getQualifiedName().toString();
+		String fullClassNameFinal = classElement.getQualifiedName().toString();
+		String simpleClassNameFinal = classElement.getSimpleName().toString();
+		String builderFullClassPathFinal = fullClassNameFinal + configurationFinal.builderSuffix();
+		String builderSimpleClassNameFinal = simpleClassNameFinal + configurationFinal.builderSuffix();
 
 		this.classElement = classElement;
-		this.configuration = configuration;
-		this.packageName = packageName;
-		this.fullClassName = fullClassName;
-		this.simpleClassName = simpleClassName;
-		this.builderFullClassName = builderFullClassPath;
-		this.builderSimpleClassName = builderSimpleClassName;
+		this.configuration = configurationFinal;
+		this.packageName = packageNameFinal;
+		this.fullClassName = fullClassNameFinal;
+		this.simpleClassName = simpleClassNameFinal;
+		this.builderFullClassName = builderFullClassPathFinal;
+		this.builderSimpleClassName = builderSimpleClassNameFinal;
 	}
 
 	public boolean isEnabled() {
@@ -115,7 +115,7 @@ public class Processor {
 				.setWithMethodName(constructWithMethodName(definition, fieldElement))
 				.setSetterMethodName(constructSetterName(definition, fieldElement))
 				.setGetterMethodName(constructGetterName(definition, fieldElement))
-			);
+		);
 	}
 
 	private void processCombination(FluentBuilder.Combination combination, Data data) {
@@ -142,7 +142,7 @@ public class Processor {
 			dataCombination.addField(
 				new Data.Field(fieldTypeSimple, fieldName)
 					.setWithMethodName(fieldWithMethodName)
-				);
+			);
 		}
 
 		data.addCombination(dataCombination);

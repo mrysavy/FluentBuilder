@@ -115,8 +115,8 @@ public class Data {
 		private String name;
 
 		public Parameter(String type, String name) {
-			setType(type);
-			setName(name);
+			this.type = type;
+			this.name = name;
 		}
 
 		public String getType() {
@@ -202,7 +202,7 @@ public class Data {
 		private List<Field> fields = new ArrayList<Field>();
 
 		public Combination(String name) {
-			setName(name);
+			this.name = name;
 		}
 
 		public String getName() {
@@ -245,8 +245,8 @@ public class Data {
 		private List<Parameter> parameters = new ArrayList<Parameter>();
 
 		public Addition(String name, String methodName) {
-			setName(name);
-			setMethodName(methodName);
+			this.name = name;
+			this.methodName = methodName;
 		}
 
 		public String getName() {
@@ -293,9 +293,6 @@ public class Data {
 
 	public static class Constructor {
 		private List<Parameter> parameters = new ArrayList<Parameter>();
-
-		public Constructor() {
-		}
 
 		public List<Parameter> getParameters() {
 			return parameters;

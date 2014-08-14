@@ -11,10 +11,17 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
+import javax.validation.constraints.NotNull;
 
 import cz.rysavi.annotations.FluentBuilder;
 
-public class FBHelper {
+public final class FBHelper {
+	/**
+	 * Private singleton constructor
+	 */
+	private FBHelper() {
+	}
+
 	public static String firstUpper(String str) {
 		if (str == null || str.isEmpty()) {
 			return str;
@@ -91,7 +98,7 @@ public class FBHelper {
 		return null;
 	}
 
-	public static String constructGetterName(FluentBuilder.Configuration configuration, FluentBuilder.Definition definition, VariableElement fieldElement) {
+	public static String constructGetterName(@NotNull FluentBuilder.Configuration configuration, FluentBuilder.Definition definition, @NotNull VariableElement fieldElement) {
 		if (definition != null && definition.getterName().length() > 0) {
 			return definition.getterName();
 		} else {
@@ -100,7 +107,7 @@ public class FBHelper {
 		}
 	}
 
-	public static String constructSetterName(FluentBuilder.Configuration configuration, FluentBuilder.Definition definition, VariableElement fieldElement) {
+	public static String constructSetterName(@NotNull FluentBuilder.Configuration configuration, FluentBuilder.Definition definition, @NotNull VariableElement fieldElement) {
 		if (definition != null && definition.setterName().length() > 0) {
 			return definition.setterName();
 		} else {
@@ -108,7 +115,7 @@ public class FBHelper {
 		}
 	}
 
-	public static String constructWithMethodName(FluentBuilder.Configuration configuration, FluentBuilder.Definition definition, VariableElement fieldElement) {
+	public static String constructWithMethodName(@NotNull FluentBuilder.Configuration configuration, FluentBuilder.Definition definition, @NotNull VariableElement fieldElement) {
 		if (definition != null && !definition.withMethodName().isEmpty()) {
 			return definition.withMethodName();
 		} else {
@@ -116,8 +123,8 @@ public class FBHelper {
 		}
 	}
 
-	public static String constructWithMethodName(FluentBuilder.Configuration configuration, FluentBuilder.Addition addition) {
-		if (addition != null && !addition.withMethodName().isEmpty()) {
+	public static String constructWithMethodName(@NotNull FluentBuilder.Configuration configuration, @NotNull FluentBuilder.Addition addition) {
+		if (!addition.withMethodName().isEmpty()) {
 			return addition.withMethodName();
 		} else {
 			return configuration.withPrefix() + FBHelper.firstUpper(addition.name());

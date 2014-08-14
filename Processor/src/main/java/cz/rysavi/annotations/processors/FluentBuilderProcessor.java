@@ -25,7 +25,11 @@ import cz.rysavi.annotations.processors.fluentbuilder.Processor;
 @SupportedAnnotationTypes("cz.rysavi.annotations.FluentBuilder.Configuration")
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class FluentBuilderProcessor extends AbstractProcessor {
-	private static final STGroup builderClassTemplateGroup = new STGroupFile("templates/builder.stg");
+	private final STGroup builderClassTemplateGroup;
+
+	public FluentBuilderProcessor() {
+		this.builderClassTemplateGroup = new STGroupFile("templates/builder.stg");
+	}
 
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {

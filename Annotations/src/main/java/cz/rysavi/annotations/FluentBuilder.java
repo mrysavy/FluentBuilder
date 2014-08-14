@@ -9,74 +9,74 @@ public interface FluentBuilder {
 	@Target(ElementType.TYPE)
 	@Retention(RetentionPolicy.SOURCE)
 	public static @interface Configuration {
-		public boolean enabled() default true;
+		boolean enabled() default true;
 
-		public String builderSuffix() default "Builder";
+		String builderSuffix() default "Builder";
 
-		public String buildMethod() default "build";
+		String buildMethod() default "build";
 
-		public String copyMethod() default "copy";
+		String copyMethod() default "copy";
 
-		public String getterPrefix() default "get";
+		String getterPrefix() default "get";
 
-		public String isPrefix() default "is";
+		String isPrefix() default "is";
 
-		public String setterPrefix() default "set";
+		String setterPrefix() default "set";
 
-		public String withPrefix() default "with";
+		String withPrefix() default "with";
 
-		public String[] constructorFields() default {};
+		String[] constructorFields() default { };
 
-		public Combination[] combinations() default {};
+		Combination[] combinations() default { };
 
-		public Addition[] additions() default {};
+		Addition[] additions() default { };
 
-		public Constructor[] constructors() default {};
+		Constructor[] constructors() default { };
 	}
 
 	@Target(ElementType.FIELD)
 	@Retention(RetentionPolicy.SOURCE)
 	public static @interface Definition {
-		public boolean excluded() default false;
+		boolean excluded() default false;
 
-		public String getterName() default "";
+		String getterName() default "";
 
-		public String setterName() default "";
+		String setterName() default "";
 
-		public String withMethodName() default "";
+		String withMethodName() default "";
 	}
 
 	@Target(ElementType.ANNOTATION_TYPE)
 	@Retention(RetentionPolicy.SOURCE)
 	public static @interface Combination {
-		public String name();
+		String name();
 
-		public String[] fields();
+		String[] fields();
 	}
 
 	@Target(ElementType.ANNOTATION_TYPE)
 	@Retention(RetentionPolicy.SOURCE)
 	public static @interface Addition {
-		public String name();
+		String name();
 
-		public String withMethodName() default "";
+		String withMethodName() default "";
 
-		public String method();
+		String method();
 
-		public Parameter[] parameters() default {};
+		Parameter[] parameters() default { };
 
 		@Target(ElementType.ANNOTATION_TYPE)
 		@Retention(RetentionPolicy.SOURCE)
 		public static @interface Parameter {
-			public String name();
+			String name();
 
-			public String type();
+			String type();
 		}
 	}
 
 	@Target(ElementType.ANNOTATION_TYPE)
 	@Retention(RetentionPolicy.SOURCE)
 	public static @interface Constructor {
-		public String[] fields();
+		String[] fields();
 	}
 }

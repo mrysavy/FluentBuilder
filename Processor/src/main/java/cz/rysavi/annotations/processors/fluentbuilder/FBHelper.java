@@ -3,8 +3,10 @@ package cz.rysavi.annotations.processors.fluentbuilder;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
@@ -129,5 +131,35 @@ public final class FBHelper {
 		} else {
 			return configuration.withPrefix() + FBHelper.firstUpper(addition.name());
 		}
+	}
+
+	public static PackageElement getPackage(@NotNull TypeElement classElement) {
+		Element parent = classElement.getEnclosingElement();
+		if (parent instanceof PackageElement) {
+			return (PackageElement) parent;
+		}
+		if (parent instanceof TypeElement) {
+			return getPackage((TypeElement) parent);
+		}
+		return null;
+	}
+
+	public static String constructBuilderClassName(@NotNull TypeElement classElement, @NotNull String suffix) {
+		return constructClassNameImpl(classElement, "") + suffix;
+	}
+
+	public static String constructOriginClassName(@NotNull TypeElement classElement) {
+		return constructClassNameImpl(classElement, ".");
+	}
+
+	private static String constructClassNameImpl(Element element, String delimiter) {
+		if (element == null) {
+			return "";
+		}
+		if (element instanceof TypeElement) {
+			String parent = constructClassNameImpl(element.getEnclosingElement(), delimiter);
+			return parent + (parent.length() > 0 ? delimiter : "") + element.getSimpleName();
+		}
+		return "";
 	}
 }

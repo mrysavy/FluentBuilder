@@ -2,7 +2,6 @@ package cz.rysavi.annotations.processors.fluentbuilder;
 
 import java.util.Iterator;
 
-import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 
@@ -21,11 +20,11 @@ public class Processor {
 
 	public Processor(TypeElement classElement) {
 		FluentBuilder.Configuration configurationFinal = classElement.getAnnotation(FluentBuilder.Configuration.class);
-		String packageNameFinal = ((PackageElement) classElement.getEnclosingElement()).getQualifiedName().toString();
-		String fullClassNameFinal = classElement.getQualifiedName().toString();
-		String simpleClassNameFinal = classElement.getSimpleName().toString();
-		String builderFullClassPathFinal = fullClassNameFinal + configurationFinal.builderSuffix();
-		String builderSimpleClassNameFinal = simpleClassNameFinal + configurationFinal.builderSuffix();
+		String packageNameFinal = FBHelper.getPackage(classElement).getQualifiedName().toString();
+		String simpleClassNameFinal = FBHelper.constructOriginClassName(classElement);
+		String fullClassNameFinal = packageNameFinal + "." + simpleClassNameFinal;
+		String builderSimpleClassNameFinal = FBHelper.constructBuilderClassName(classElement, configurationFinal.builderSuffix());
+		String builderFullClassPathFinal = packageNameFinal + "." + builderSimpleClassNameFinal;
 
 		this.classElement = classElement;
 		this.configuration = configurationFinal;

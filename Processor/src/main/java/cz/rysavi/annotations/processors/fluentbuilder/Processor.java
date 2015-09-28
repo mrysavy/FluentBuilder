@@ -114,6 +114,7 @@ public class Processor {
 				.setWithMethodName(constructWithMethodName(definition, fieldElement))
 				.setSetterMethodName(constructSetterName(definition, fieldElement))
 				.setGetterMethodName(constructGetterName(definition, fieldElement))
+				.setIgnoreNulls(definition != null ? definition.ignoreNulls() : false)
 		);
 	}
 

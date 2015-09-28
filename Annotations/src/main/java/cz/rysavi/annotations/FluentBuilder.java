@@ -39,6 +39,8 @@ public interface FluentBuilder {
 	public static @interface Definition {
 		boolean excluded() default false;
 
+		boolean ignoreNulls() default false;
+
 		String getterName() default "";
 
 		String setterName() default "";

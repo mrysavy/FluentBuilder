@@ -143,6 +143,7 @@ public class Data {
 		private String setterMethodName;
 		private String getterMethodName;
 		private boolean constructorField;
+		private boolean ignoreNulls;
 
 		public Field(String type, String name) {
 			super(type, name);
@@ -193,6 +194,15 @@ public class Data {
 
 		public void setConstructorField(boolean constructorField) {
 			this.constructorField = constructorField;
+		}
+
+		public boolean isIgnoreNulls() {
+			return ignoreNulls;
+		}
+
+		public Field setIgnoreNulls(boolean ignoreNulls) {
+			this.ignoreNulls = ignoreNulls;
+			return this;
 		}
 	}
 

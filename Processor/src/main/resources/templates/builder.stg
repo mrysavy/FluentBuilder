@@ -59,11 +59,19 @@ public class <data.builderClassName> {
     private static interface Execution {
         public void execute(<data.instanceClassName> instance);
     }
+
+	<! Builder field value type !>
+    private static class FieldValue\<T> {
+        private T value;
+        public FieldValue(T value) {
+            this.value = value;
+        }
+    }
 }
 >>
 
 builderField(field) ::= <<
-private <field.type> <field.name>;
+private FieldValue\<<field.type>\> <field.name> = <if(field.ignoreNulls)>null<else>new FieldValue(null)<endif>;
 
 >>
 
@@ -74,15 +82,15 @@ this.<field.name> = builder.<field.name>;
 
 builderInstanceConstructorBody(field) ::= <<
 
-this.<field.name> = instance.<field.getterMethodName>();
+this.<field.name> = new FieldValue(instance.<field.getterMethodName>());
 >>
 
 builderWithMethod(field) ::= <<
 
 
 public <data.builderClassName> <field.withMethodName>(<field.type> <field.name>) {
-    this.<field.name> = <field.name>;
-    return this;
+	this.<field.name> = new FieldValue(<field.name>);
+	return this;
 }
 >>
 
@@ -128,7 +136,7 @@ public <data.builderClassName> <addition.withMethodName>(<builderMethodParameter
 >>
 
 builderBuildMethodBody(field) ::= <<
-<if(!field.constructorField)>result.<field.setterMethodName>(this.<field.name>);
+<if(!field.constructorField)>if(this.<field.name> != null) result.<field.setterMethodName>(this.<field.name>.value);
 <endif>
 >>
 

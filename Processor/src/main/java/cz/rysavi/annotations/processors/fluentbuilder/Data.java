@@ -192,8 +192,9 @@ public class Data {
 			return constructorField;
 		}
 
-		public void setConstructorField(boolean constructorField) {
+		public Field setConstructorField(boolean constructorField) {
 			this.constructorField = constructorField;
+			return this;
 		}
 
 		public boolean isIgnoreNulls() {
